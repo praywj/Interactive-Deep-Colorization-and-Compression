@@ -19,18 +19,19 @@ function counter = getRandomLocalInputs(root_dir, save_dir, num)
         else
             ori = imread(item_path);
             [height, width, C] = size(ori);
-            points_mask = zeros(height, width);
+            points_mask = uint8(zeros(height, width));
+            points_rgb = uint8(zeros(height, width, C));
             for m = 1 : num
                 x = randi([1,height]);
                 y = randi([1,width]);
                 % Avoid the same local input points
                 if points_mask(x, y) ~= 255
+                    points_rgb(x, y, :) = ori(x, y, :);
                     points_mask(x, y) = 255;
                 else
                     m = m-1;
                 end
             end
-            points_rgb = ori .* points_mask;
             if ~exist([save_dir, '_mask', int2str(num)], 'dir')
                mkdir([save_dir, '_mask', int2str(num)]);
                mkdir([save_dir, int2str(num)]);
